@@ -17,7 +17,7 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
 // show images 
 const showImages = (images) => {
-  if(!images.length) { // add does not match message
+  if(!images.length) { // add bonus content 1:  does not match message
     gallery.innerHTML = `
     <div class="d-flex justify-content-center w-100 mt-5">
       <h1>Does not match any result</h1>
@@ -128,7 +128,7 @@ searchBtn.addEventListener('submit', function (e) { // problem fix 4
   document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
   const search = document.getElementById('search');
-  // add loading
+  // add bonus content 2: loading
   gallery.innerHTML =`
   <div class="d-flex justify-content-center w-100 mt-5">
     <div class="spinner-border" role="status"></div>
