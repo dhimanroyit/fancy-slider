@@ -13,25 +13,33 @@ let sliders = [];
 // to create your own api key
 const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
+
+
 // show images 
 const showImages = (images) => {
-  imagesArea.style.display = 'block';
-  gallery.innerHTML = '';
-  // show gallery title
-  galleryHeader.style.display = 'flex';
-  images.forEach(image => {
-    let div = document.createElement('div');
-    div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
-    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-    gallery.appendChild(div)
+  if(!images.length) { // add does not match message
+    gallery.innerHTML = `
+    <div class="d-flex justify-content-center w-100 mt-5">
+      <h1>Does not match any result</h1>
+    </div>`;
+  } else {
+    imagesArea.style.display = 'block';
+    gallery.innerHTML = '';
+    // show gallery title
+    galleryHeader.style.display = 'flex';
+    images.forEach(image => {
+      let div = document.createElement('div');
+      div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
+      div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
+      gallery.appendChild(div)
   })
-
+  }
 }
 
 const getImages = (query) => {
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
-    .then(data => showImages(data.hitS))
+    .then(data => showImages(data.hits)) // problem fix 1
     .catch(err => console.log(err))
 }
 
@@ -44,11 +52,17 @@ const selectItem = (event, img) => {
   if (item === -1) {
     sliders.push(img);
   } else {
-    alert('Hey, Already added !')
+    sliders.splice(item, 1); // problem fix 5
+    element.classList.remove('added')
   }
 }
 var timer
 const createSlider = () => {
+  const duration = document.getElementById('duration').value || 1000; // problem fix 2 
+  if(duration < 0) {  // problem fix 3
+    alert('Duration Can Not Be Negative Value')
+    return;
+  }
   // check slider image length
   if (sliders.length < 2) {
     alert('Select at least 2 image.')
@@ -67,7 +81,7 @@ const createSlider = () => {
   document.querySelector('.main').style.display = 'block';
   // hide image aria
   imagesArea.style.display = 'none';
-  const duration = document.getElementById('duration').value || 1000;
+
   sliders.forEach(slide => {
     let item = document.createElement('div')
     item.className = "slider-item";
@@ -109,10 +123,17 @@ const changeSlide = (index) => {
   items[index].style.display = "block"
 }
 
-searchBtn.addEventListener('click', function () {
+searchBtn.addEventListener('submit', function (e) { // problem fix 4
+  e.preventDefault();
   document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
   const search = document.getElementById('search');
+  // add loading
+  gallery.innerHTML =`
+  <div class="d-flex justify-content-center w-100 mt-5">
+    <div class="spinner-border" role="status"></div>
+    <h2>Loading...</h2>
+  </div>`
   getImages(search.value)
   sliders.length = 0;
 })
