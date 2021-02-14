@@ -58,10 +58,9 @@ const selectItem = (event, img) => {
 }
 var timer
 const createSlider = () => {
-  const duration = document.getElementById('duration').value || 1000; // problem fix 2 
+  let duration = document.getElementById('duration').value || 1000; // problem fix 2 
   if(duration < 0) {  // problem fix 3
-    alert('Duration Can Not Be Negative Value')
-    return;
+    duration = duration * -1
   }
   // check slider image length
   if (sliders.length < 2) {
